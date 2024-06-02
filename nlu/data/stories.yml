@@ -1,0 +1,113 @@
+version: "3.0"
+
+stories:
+- story: greet
+  steps:
+    - intent: greet
+    - action: utter_greet
+
+- story: say goodbye
+  steps:
+    - intent: exit
+    - action: utter_goodbye
+
+# 疾病诊断
+- story: diagnosis register
+  steps:
+    - or:
+        - intent: disease_diagnosis
+        - intent: disease_diagnosis
+          entities:
+            - symptom: 头晕
+    - action: action_arouse_diagnosis_api
+    - checkpoint: checkpoint_goto_registration_or_drug_recommendation
+
+# 直接预约挂号
+- story: registration
+  steps:
+    - or:
+        - intent: need_registration
+        - intent: need_registration
+          entities:
+            - disease: 肺炎
+        - intent: need_registration
+          entities:
+            - department: 呼吸内科
+        - intent: need_registration
+          entities:
+            - disease: 肺炎
+            - department: 呼吸内科
+    - action: action_check_disease_or_dep_slot
+    - checkpoint: checkpoint_goto_confirm_or_cancel_registration
+
+# 问诊后，选择预约挂号
+- story: select registration
+  steps:
+    - checkpoint: checkpoint_goto_registration_or_drug_recommendation
+    - intent: need_registration
+    - action: action_check_disease_or_dep_slot
+    - checkpoint: checkpoint_goto_confirm_or_cancel_registration
+
+# 确认挂号后的流程
+- story: handle confirm registration
+  steps:
+    - checkpoint: checkpoint_goto_confirm_or_cancel_registration
+    - intent: affirm
+    - action: action_check_doctors_info
+    - checkpoint: checkpoint_goto_select_doctor
+
+# 取消挂号后的流程
+- story: handle cancel registration
+  steps:
+    - checkpoint: checkpoint_goto_confirm_or_cancel_registration
+    - intent: deny
+    - action: utter_did_that_help
+    - slot_was_set:
+        - is_did_help: true
+    - checkpoint: ask_suggestions_or_not
+
+- story: no need ask suggestions
+  steps:
+    - checkpoint: ask_suggestions_or_not
+    - intent: affirm
+    - slot_was_set:
+        - is_did_help: true
+    - action: utter_goodbye
+
+- story: ask suggestions
+  steps:
+    - checkpoint: ask_suggestions_or_not
+    - intent: deny
+    - action: utter_ask_suggestions
+    - action: action_listen
+    - action: utter_thanks_for_suggestions_and_goodbye
+
+# 问诊后，选择用药推荐
+- story: select drug recommendation
+  steps:
+    - checkpoint: checkpoint_goto_registration_or_drug_recommendation
+    - intent: need_drug_recommendation
+    - action: action_arouse_drug_recommendation_api
+
+# 选择医生挂号
+- story: select doctor
+  steps:
+    - checkpoint: checkpoint_goto_select_doctor
+    - intent: select_doctor
+      entities:
+        - doctor: 李医生
+    - slot_was_set:
+        - doctor: 李医生
+    - action: action_start_up_register_service
+
+# 疾病诊断流程中的阴阳选项
+- story: diagnosis attributes selection
+  steps:
+    - or:
+        - intent: affirm
+          entities:
+            - diagnosis_choice: positive
+        - intent: deny
+          entities:
+            - diagnosis_choice: negative
+    - action: action_positive_or_negative

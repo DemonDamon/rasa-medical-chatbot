@@ -1,0 +1,59 @@
+## The config recipe.
+## https://rasa.com/docs/rasa/model-configuration/
+#recipe: default.v1
+#
+## Configuration for Rasa NLU.
+## https://rasa.com/docs/rasa/nlu/components/
+#language: zh
+#
+#pipeline:
+#  - name: HFTransformersNLP
+#    model_name: bert
+#    model_weights: bert-base-chinese
+#    cache_dir: data/bert-base-chinese
+#  - name: rasa_chinese.nlu.tokenizers.lm_tokenizer.LanguageModelTokenizer
+#    tokenizer_url: 'http://127.0.0.1:8000/'
+#  - name: LanguageModelFeaturizer
+#  - name: DIETClassifier
+#    epochs: 50
+#  - name: EntitySynonymMapper
+#  - name: ResponseSelector
+#    epochs: 50
+#policies:
+#  - name: TEDPolicy
+#    epochs: 200
+#    max_history: 8
+
+recipe: default.v1
+
+language: zh
+pipeline:
+  - name: JiebaTokenizer
+    dictionary_path: "data/jieba_dict"
+    "intent_tokenization_flag": False
+    "intent_split_symbol": "_"
+  - name: LanguageModelFeaturizer
+    model_name: bert
+#    model_weights: bert-base-chinese
+    model_weights: "data/bert_base_chn_model"
+  - name: RegexFeaturizer
+    "use_word_boundaries": True
+  - name: DIETClassifier
+    epochs: 100
+    tensorboard_log_directory: ./log
+    learning_rate: 0.001
+    constrain_similarities: True
+  - name: RegexEntityExtractor
+    use_word_boundaries: False
+    use_lookup_tables: True
+  - name: EntitySynonymMapper
+  - name: ResponseSelector
+    constrain_similarities: True
+
+policies:
+  - name: MemoizationPolicy
+  - name: TEDPolicy
+    max_history: 10
+    epochs: 100
+    constrain_similarities: True
+  - name: RulePolicy

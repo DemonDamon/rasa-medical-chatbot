@@ -1,0 +1,17 @@
+/reference/
+/nlu/data/bert_base_chn_model/config.json
+/nlu/data/bert_base_chn_model/pytorch_model.bin
+/nlu/data/bert_base_chn_model/tokenizer.json
+/nlu/data/bert_base_chn_model/tokenizer_config.json
+/nlu/data/bert_base_chn_model/vocab.txt
+/tts/
+/备份数据/
+/data/MedicalQAQA.csv
+/data/omaha术语.csv
+/data/omaha类型.csv
+/data/product_system_data.csv
+/data/graph_20211201.xlsx
+/data/medical.json
+/data/department2tags.pkl
+/data/症状相关疾病数量.csv
+/nlu/models/20220413-182345-solid-shim.tar.gz

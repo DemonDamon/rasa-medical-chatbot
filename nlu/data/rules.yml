@@ -1,0 +1,13 @@
+version: "3.0"
+
+rules:
+
+- rule: Return user guidance
+  steps:
+    - intent: need_guidance
+    - action: utter_guidance
+
+- rule: out-of-scope
+  steps:
+    - intent: out_of_scope
+    - action: utter_out_of_scope

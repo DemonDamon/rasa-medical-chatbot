@@ -1,0 +1,217 @@
+version: "3.0"
+
+intents:
+  - greet
+#      use_entities:  # To ignore some entities or explicitly take only certain entities into account you can use this syntax
+#        - name
+#        - first_name
+#      ignore_entities:
+#        - location
+#        - age
+  - exit
+#      use_entities: []  # ignore all entities for certain intents
+  - affirm
+  - deny
+  - disease_diagnosis
+  - need_registration
+  - need_guidance
+  - select_doctor
+  - need_drug_recommendation
+  - out_of_scope
+
+entities:
+  - symptom
+  - disease
+  - department
+  - doctor
+  - diagnosis_choice
+  - is_press_registration_button
+  - is_press_drug_recommendation_button
+  - is_did_help
+
+slots:
+   symptom:
+      type: text
+      influence_conversation: false
+      mappings:
+      - type: from_entity
+        entity: symptom
+
+   disease:
+      type: text
+      influence_conversation: false
+      mappings:
+      - type: from_entity
+        entity: disease
+
+   department:
+      type: text
+      influence_conversation: false
+      mappings:
+      - type: from_entity
+        entity: department
+
+   doctor:
+      type: text
+      influence_conversation: false
+      mappings:
+        - type: from_entity
+          entity: doctor
+
+   diagnosis_choice:
+     type: text
+     influence_conversation: false
+     mappings:
+       - type: from_entity
+         entity: diagnosis_choice
+
+   suggestion_node:
+     type: text
+     influence_conversation: false
+     mappings:
+       - type: custom
+
+   suggestions:
+     type: text
+     influence_conversation: false
+     mappings:
+       - type: custom
+
+   is_start_diagnosis_query:
+     type: bool
+     influence_conversation: false
+     mappings:
+       - type: custom
+
+   is_enough:
+     type: bool
+     influence_conversation: false
+     mappings:
+       - type: custom
+
+   is_break_loop:
+     type: bool
+     influence_conversation: false
+     mappings:
+       - type: custom
+
+   is_reg_chief_complaint:
+     type: bool
+     influence_conversation: false
+     mappings:
+       - type: custom
+
+   is_press_registration_button:
+     type: bool
+     influence_conversation: false
+     mappings:
+       - type: custom
+
+   is_press_drug_recommendation_button:
+     type: bool
+     influence_conversation: false
+     mappings:
+       - type: custom
+
+   is_did_help:
+     type: bool
+     influence_conversation: false
+     mappings:
+       - type: custom
+
+responses:
+  utter_greet:
+    - text: "你好，我是智能导诊机器人Robinson🤖，很高兴为您服务！请问有什么可以帮到您的？"
+    - text: "你好，我是智能导诊机器人Robinson🤖，很高兴为您服务！"
+    - text: "Hello，我是智能导诊机器人Robinson🤖，请问有什么可以帮到您的？"
+    - text: "Hi，我是智能导诊机器人Robinson🤖，请问有什么可以帮到您的？"
+    - text: "我是智能导诊机器人Robinson🤖，您可以 \n
+              (1) 告诉我不适的症状，经过初步诊断后，为您推荐科室 \n
+              (2) 告诉我疾病或科室，直接为您挂号 \n"
+
+  utter_did_that_help:
+    - text: "请问是否有帮到您？"
+    - text: "请问本次对话服务是否满意？"
+    - text: "请问本次对话是否帮到您？"
+      buttons:
+        - title: "有"
+          payload: '/affirm{"is_did_help": "True"}'
+        - title: "无"
+          payload: '/deny{"is_did_help": "False"}'
+
+  utter_goodbye:
+    - text: "期待下次再见！"
+    - text: "Bye，期待下次为您服务！"
+    - text: "好的，期待下次为您服务！"
+
+  utter_thanks_for_suggestions_and_goodbye:
+    - text: "感谢您的反馈，期待下次再见！"
+    - text: "已收到贵用户反馈，我们一定尽力改善，期待下次再见！"
+
+  utter_default:
+    - text: "不好意思，我还不明白您说的话。"
+
+  utter_guidance:
+    - text: "使用指南：\n
+            (1) 如果用户清楚所患疾病，可以直接回复疾病名或科室名进行挂号\n
+            (2) 如果用户不清楚所患疾病，可以先回复当前不适症状，经过初步诊断后再推荐相关的科室进行挂号\n"
+
+  utter_ask_registration_or_drug_recommendation:
+    - text: "请选择"
+      buttons:
+        - title: "预约挂号"
+          payload: '/need_registration{"is_press_registration_button":true}'
+        - title: "推荐用药"
+          payload: '/need_drug_recommendation{"is_press_drug_recommendation_button":true}'
+
+  utter_recommend_dep:
+    - text: "初步诊断为{disease}，推荐您挂号{department}"
+    - text: "疾病初步诊断为{disease}，为您匹配{department}"
+
+  utter_ask_check_doctors:
+    - text: "请问是否需要为您提供{department}医生信息？"
+    - text: "请问是否需要查看{department}可预约的医生信息？"
+
+  utter_register_success:
+    - text: "已成功为您挂号！"
+    - text: "挂号成功！"
+    - text: "挂号完成，请查看订单！"
+
+  utter_ask_suggestions:
+    - text: "请问您有什么建议呢？"
+    - text: "请问您有什么宝贵的建议吗？"
+
+  utter_out_of_scope:
+    - text: "不好意思，我无法处理该问题"
+
+#  utter_试试按钮:
+#    - text: "这个按钮有两个功能，你可以试试："
+#      buttons:
+#        - title: "吸猫"
+#          payload: '/看图片{{"look_img":"猫"}}'
+#        - title: "你是不是bot"
+#          payload: "/bot_challenge"
+
+actions:
+  - utter_greet
+  - utter_did_that_help
+  - utter_goodbye
+  - utter_default
+  - utter_recommend_dep
+  - utter_guidance
+  - utter_register_success
+  - utter_ask_check_doctors
+  - utter_ask_suggestions
+  - utter_thanks_for_suggestions_and_goodbye
+  - utter_ask_registration_or_drug_recommendation
+  - utter_out_of_scope
+  - action_arouse_diagnosis_api
+  - action_check_disease_or_dep_slot
+  - action_check_doctors_info
+  - action_start_up_register_service
+  - action_positive_or_negative
+  - action_arouse_drug_recommendation_api
+
+session_config:
+  session_expiration_time: 60
+  carry_over_slots_to_new_session: true
