@@ -6,6 +6,7 @@
 /nlu/data/bert_base_chn_model/vocab.txt
 /tts/
 /备份数据/
+.idea/
 /data/MedicalQAQA.csv
 /data/omaha术语.csv
 /data/omaha类型.csv
